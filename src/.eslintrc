@@ -1,5 +1,11 @@
 {
   "env": {
     "jest": true
+  },
+  "rules": {
+    "quotes": ["double"],
+    "comma-dangle": "off",
+    "curly": "off",
+    "jsx-quotes": "off"
   }
 }
