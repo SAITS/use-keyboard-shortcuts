@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 
-const ALLOWED_COMBO_KEYS = JSON.stringify(["ctrl", "shift", "alt"])
-const ALLOWED_EVENTS = JSON.stringify(["keydown", "mousewheel"])
+const ALLOWED_COMBO_KEYS = ["ctrl", "shift", "alt"]
+const ALLOWED_EVENTS = ["keydown", "mousewheel"]
 
 const throwError = message =>
   console.error(`Error thrown for useKeyboardShortcuts: ${message}`)
@@ -13,29 +13,36 @@ const allComboKeysPressed = (keys, event) => {
   return true
 }
 
-const validateNonComboKeys = keys => {
+const validateKeys = keys => {
+  let errorMessage = undefined
+
   if (!keys.length)
-    return `You need to specify a key besides ${ALLOWED_COMBO_KEYS}`
+    errorMessage = `You need to specify a key besides ${JSON.stringify(
+      ALLOWED_COMBO_KEYS
+    )}.`
   if (keys.length > 1)
-    return `Only one key besides ${ALLOWED_COMBO_KEYS} can be used.
-    Found ${keys.length}: [${keys.map(key => `"${key}"`)}]`
+    errorMessage = `Only one key besides ${JSON.stringify(
+      ALLOWED_COMBO_KEYS
+    )} can be used.
+    Found ${keys.length}: [${keys.map(key => `"${key}"`)}].`
+
+  if (errorMessage) throwError(errorMessage)
+  return errorMessage === undefined
 }
 
-const withoutComboKeys = key => !JSON.parse(ALLOWED_COMBO_KEYS).includes(key)
+const withoutComboKeys = key => !ALLOWED_COMBO_KEYS.includes(key)
 
 const generateFunction = (shortcut, event) => {
-  if (!event) return throwError("No event passed to the function")
+  const keys = shortcut.keys.filter(withoutComboKeys)
 
-  const nonComboKeys = shortcut.keys.filter(withoutComboKeys)
+  const valid = validateKeys(keys)
+  if (!valid) return
 
-  const error = validateNonComboKeys(nonComboKeys)
-  if (error) return throwError(error)
-
-  const nonComboKey = nonComboKeys[0]
+  const key = keys[0]
 
   const shouldExecAction =
     allComboKeysPressed(shortcut.keys, event) &&
-    (nonComboKey === "scroll" || nonComboKey === event.key) &&
+    (key === "scroll" || key === event.key) &&
     !shortcut.disabled
 
   if (shouldExecAction) {
@@ -51,11 +58,13 @@ const useKeyboardShortcuts = (
   eventType = "keydown"
 ) => {
   if (!shortcuts || !shortcuts.length)
-    return throwError("You need to pass at least one shortcut as an argument")
+    return throwError("You need to pass at least one shortcut as an argument.")
 
   if (!ALLOWED_EVENTS.includes(eventType))
     return throwError(
-      `Unsupported event. Supported events are: ${ALLOWED_EVENTS}. Found event: "${eventType}"`
+      `Unsupported event. Supported events are: ${JSON.stringify(
+        ALLOWED_EVENTS
+      )}. Found event: "${eventType}".`
     )
 
   const handleKeyboardShortcuts = e =>

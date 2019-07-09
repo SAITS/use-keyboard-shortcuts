@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 import useKeyboardShortcuts from "use-keyboard-shortcuts"
 
-const onAlert = event => alert("ctrl + a was clicked")
+const handleAlert = event => alert("ctrl + a was clicked")
 
 const App = () => {
   const [ctrlScrollIsActive, setCtrlScrollIsActive] = useState(false)
@@ -14,7 +14,7 @@ const App = () => {
     if (movementX < 0 && rangeValue > 1) return setRangeValue(rangeValue - 1)
   }
 
-  useKeyboardShortcuts([{ keys: ["ctrl", "a"], onEvent: onAlert }])
+  useKeyboardShortcuts([{ keys: ["ctrl", "a"], onEvent: handleAlert }])
   useKeyboardShortcuts(
     [{ keys: ["ctrl", "shift", "scroll"], onEvent: handleCtrlScroll }],
     ctrlScrollIsActive,
