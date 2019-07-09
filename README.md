@@ -1,6 +1,6 @@
 # use-keyboard-shortcuts
 
-> A package for wrapping an element with a drawable canvas.
+> React hook to attach keyboard shortcuts to the document.
 
 [![NPM](https://img.shields.io/npm/v/react-drawable-overlay.svg)](https://www.npmjs.com/package/use-keyboard-shortcuts) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
