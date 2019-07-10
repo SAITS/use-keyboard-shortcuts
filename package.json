@@ -1,10 +1,10 @@
 {
   "name": "use-keyboard-shortcuts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "React hook to attach keyboard shortcuts to the document",
-  "author": "jimmyhoglund",
+  "author": "SAITS",
   "license": "MIT",
-  "repository": "jimmyhoglund/use-keyboard-shortcuts",
+  "repository": "SAITS/use-keyboard-shortcuts",
   "keywords": [
     "react",
     "hook",

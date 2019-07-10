@@ -45,4 +45,4 @@ See the example-folder for an extended example of how to use this with the "mous
 
 ## License
 
-MIT © [jimmyhoglund](https://github.com/jimmyhoglund)
+MIT © [SAITS](https://github.com/SAITS)
