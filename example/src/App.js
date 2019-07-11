@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import useKeyboardShortcuts from "use-keyboard-shortcuts"
 
-const handleAlert = event => alert("ctrl + a was clicked")
+const handleAlert = event => alert("ctrl + a was pressed")
 
 const App = () => {
   const [ctrlScrollIsActive, setCtrlScrollIsActive] = useState(false)

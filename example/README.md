@@ -19,7 +19,7 @@ import useKeyboardShortcuts from "use-keyboard-shortcuts"
 
 const Example = () => {
   useKeyboardShortcuts([
-    { keys: ["ctrl", "a"], onEvent: event => alert("ctrl + a was clicked") },
+    { keys: ["ctrl", "a"], onEvent: event => alert("ctrl + a was pressed") },
   ])
 
   return <div>...</div>
