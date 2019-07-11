@@ -28,20 +28,28 @@ const Example = () => {
 
 ## Arguments
 
-- `First argument` - Array of shortcut objects (See Shortcut object-section below).
-- `Second argument` - Boolean. Whether or not the listener should be active. Defaults to true.
-- `Third argument` - Array of dependencies for when the listener should be updated. Defaults to [].
-- `Fourth argument` - String. Event type to decide which event the shortcut functions should trigger on. Can be "keydown" or "mousewheel". Defaults to "keydown".
+<!-- This table was generated via http://www.tablesgenerator.com/markdown_tables -->
+
+| Argument (in order) | Type                       | Default     | Description                                                                                                                 |
+| ------------------- | -------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
+| shortcut            | `Shortcut[]`               | `undefined` | Array of `Sortcut`-objects that should listen to the specified `dependencies` and `eventType`. See Shortcut object-section. |
+| active              | `boolean`                  | `true`      | Whether or not the listener should be active.                                                                               |
+| dependencies        | `any[]`                    | `[]`        | If the `onEvent`-callback receives a new value, that value needs to be specified here.                                      |
+| eventType           | `"keydown"`/`"mousewheel"` | `"keydown"` | The type of event the listener should listen to.                                                                            |
 
 ## Shortcut object
 
-- `keys` - Array of keys needed to be pressd to trigger the function specified in onEvent.
-- `onEvent` - Function to be triggered when the key combination in `keys` are pressed.
-- `disabled` - Boolean (Optional). Used if you need to disable the function from being triggered.
+<!-- This table was generated via http://www.tablesgenerator.com/markdown_tables -->
+
+| Key        | Type              | Description                                                          |
+| ---------- | ----------------- | -------------------------------------------------------------------- |
+| `keys`     | `string[]`        | Combination of keys that needs to be pressed to trigger `onEvent()`. |
+| `onEvent`  | `function(event)` | Action for when combination in `keys` are pressed.                   |
+| `disabled` | `boolean`         | Used if you need to disable `onEvent()`.                             |
 
 ## Example
 
-See the example-folder for an extended example of how to use this with the "mousewheel" event type.
+See the example-folder for an extended example of how to use this hook with the `mousewheel` event type.
 
 ## License
 

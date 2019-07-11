@@ -1,6 +1,6 @@
 {
   "name": "use-keyboard-shortcuts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "React hook to attach keyboard shortcuts to the document",
   "author": "SAITS",
   "license": "MIT",
@@ -17,6 +17,7 @@
     "react-hooks"
   ],
   "main": "dist/index.js",
+  "types": "types.d.ts",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
   "engines": {
