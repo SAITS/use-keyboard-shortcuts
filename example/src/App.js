@@ -1,5 +1,4 @@
 import React, { useState } from "react"
-
 import useKeyboardShortcuts from "use-keyboard-shortcuts"
 
 const handleAlert = event => alert("ctrl + a was clicked")
