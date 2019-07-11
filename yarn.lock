@@ -7656,6 +7656,12 @@ rollup-plugin-commonjs@^9.1.3:
     resolve "^1.10.0"
     rollup-pluginutils "^2.6.0"
 
+rollup-plugin-dts@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-dts/-/rollup-plugin-dts-1.1.5.tgz#d239a224fd061babde94fd0d0bb3177123b50520"
+  optionalDependencies:
+    "@babel/code-frame" "^7.0.0"
+
 rollup-plugin-node-resolve@^3.3.0:
   version "3.4.0"
   resolved "https://registry.yarnpkg.com/rollup-plugin-node-resolve/-/rollup-plugin-node-resolve-3.4.0.tgz#908585eda12e393caac7498715a01e08606abc89"
@@ -8551,6 +8557,10 @@ type@^1.0.1:
 typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
+
+typescript@^3.5.3:
+  version "3.5.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.5.3.tgz#c830f657f93f1ea846819e929092f5fe5983e977"
 
 uglify-js@3.4.x:
   version "3.4.10"

@@ -2,7 +2,7 @@
 
 > React hook to attach keyboard shortcuts to the document.
 
-[![NPM](https://img.shields.io/npm/v/react-drawable-overlay.svg)](https://www.npmjs.com/package/use-keyboard-shortcuts) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/use-keyboard-shortcuts.svg)](https://www.npmjs.com/package/use-keyboard-shortcuts) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
@@ -19,7 +19,7 @@ import useKeyboardShortcuts from "use-keyboard-shortcuts"
 
 const Example = () => {
   useKeyboardShortcuts([
-    { keys: ["ctrl", "a"], onEvent: event => alert("ctrl + a was clicked") },
+    { keys: ["ctrl", "a"], onEvent: event => alert("ctrl + a was pressed") },
   ])
 
   return <div>...</div>
@@ -30,12 +30,12 @@ const Example = () => {
 
 <!-- This table was generated via http://www.tablesgenerator.com/markdown_tables -->
 
-| Argument (in order) | Type                       | Default     | Description                                                                                                                 |
-| ------------------- | -------------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
-| shortcut            | `Shortcut[]`               | `undefined` | Array of `Sortcut`-objects that should listen to the specified `dependencies` and `eventType`. See Shortcut object-section. |
-| active              | `boolean`                  | `true`      | Whether or not the listener should be active.                                                                               |
-| dependencies        | `any[]`                    | `[]`        | If the `onEvent`-callback receives a new value, that value needs to be specified here.                                      |
-| eventType           | `"keydown"`/`"mousewheel"` | `"keydown"` | The type of event the listener should listen to.                                                                            |
+| Argument (in order) | Type                       | Default     | Description                                                                                                                  |
+| ------------------- | -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| shortcuts           | `Shortcut[]`               | `undefined` | Array of `Shortcut`-objects that should listen to the specified `dependencies` and `eventType`. See Shortcut object-section. |
+| active              | `boolean`                  | `true`      | Whether or not the listener should be active.                                                                                |
+| dependencies        | `any[]`                    | `[]`        | If the `onEvent`-callback receives a new value, that value needs to be specified here.                                       |
+| eventType           | `"keydown"`/`"mousewheel"` | `"keydown"` | The type of event the listener should listen to.                                                                             |
 
 ## Shortcut object
 
