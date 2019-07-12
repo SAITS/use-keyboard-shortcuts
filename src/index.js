@@ -7,19 +7,20 @@ const throwError = message =>
   console.error(`Error thrown for useKeyboardShortcuts: ${message}`)
 
 const allComboKeysPressed = (keys, event) => {
+  keys = keys.map(key => key.toLowerCase())
   if (keys.includes("ctrl") && (!event.ctrlKey && !event.metaKey)) return false
   if (keys.includes("shift") && !event.shiftKey) return false
   if (keys.includes("alt") && !event.altKey) return false
   return true
 }
 
-const validateKeys = keys => {
+const validateKeys = (keys, eventType) => {
   let errorMessage = undefined
 
-  if (!keys.length)
+  if (eventType !== "mousewheel" && !keys.length)
     errorMessage = `You need to specify a key besides ${JSON.stringify(
       ALLOWED_COMBO_KEYS
-    )}.`
+    )} for keydown events.`
   if (keys.length > 1)
     errorMessage = `Only one key besides ${JSON.stringify(
       ALLOWED_COMBO_KEYS
@@ -30,26 +31,14 @@ const validateKeys = keys => {
   return errorMessage === undefined
 }
 
-const withoutComboKeys = key => !ALLOWED_COMBO_KEYS.includes(key)
+const withoutComboKeys = key => !ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
 
-const generateFunction = (shortcut, event) => {
-  const keys = shortcut.keys.filter(withoutComboKeys)
+const comboKeys = key => ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
 
-  const valid = validateKeys(keys)
-  if (!valid) return
+const isSingleKeyEvent = event =>
+  !event.shiftKey && !event.metaKey && !event.altKey && !event.ctrlKey
 
-  const key = keys[0]
-
-  const shouldExecAction =
-    allComboKeysPressed(shortcut.keys, event) &&
-    (key === "scroll" || key === event.key) &&
-    !shortcut.disabled
-
-  if (shouldExecAction) {
-    event.preventDefault()
-    return shortcut.onEvent(event)
-  }
-}
+const isSingleKeyShortcut = shortcut => !shortcut.keys.filter(comboKeys).length
 
 const useKeyboardShortcuts = (
   shortcuts,
@@ -66,6 +55,47 @@ const useKeyboardShortcuts = (
         ALLOWED_EVENTS
       )}. Found event: "${eventType}".`
     )
+
+  const shortcutHasPrioroty = (inputShortcut, key, event) => {
+    if (shortcuts.length === 1) return true
+    if (isSingleKeyShortcut(inputShortcut) && isSingleKeyEvent(event))
+      return true
+
+    const hasSameKey = shortcut =>
+      shortcut.keys.includes(key) && shortcut !== inputShortcut
+
+    const shortcutsWithSameKey = shortcuts.filter(hasSameKey)
+    if (!shortcutsWithSameKey.length) return true
+
+    return (
+      allComboKeysPressed(inputShortcut.keys, event) &&
+      !shortcutsWithSameKey.find(
+        shortcut =>
+          allComboKeysPressed(shortcut.keys, event) &&
+          shortcut.keys.length > inputShortcut.keys.length
+      )
+    )
+  }
+
+  const generateFunction = (shortcut, event) => {
+    const keys = shortcut.keys.filter(withoutComboKeys)
+
+    const valid = validateKeys(keys, event.type)
+    if (!valid) return
+
+    const key = keys[0]
+
+    const shouldExecAction =
+      !shortcut.disabled &&
+      allComboKeysPressed(shortcut.keys, event) &&
+      (event.type === "mousewheel" || key === event.code) &&
+      shortcutHasPrioroty(shortcut, key, event)
+
+    if (shouldExecAction) {
+      event.preventDefault()
+      shortcut.onEvent(event)
+    }
+  }
 
   const handleKeyboardShortcuts = e =>
     shortcuts.forEach(shortcut => generateFunction(shortcut, e))

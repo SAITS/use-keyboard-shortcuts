@@ -34,8 +34,7 @@
     "deploy": "gh-pages -d example/build"
   },
   "peerDependencies": {
-    "react": "^15.0.0 || ^16.8.0",
-    "react-dom": "^15.0.0 || ^16.8.0"
+    "react": "^16.8.0"
   },
   "devDependencies": {
     "@svgr/rollup": "^2.4.1",
