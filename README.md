@@ -6,9 +6,10 @@
 
 ## Features
 
+- Easy to use
 - Support for `keydown` and `mousewheel` events
 - Attaches listeners to the document
-- Prevents propagation. This means that if you have a shortcut for `ctrl + a` and `ctrl + shift + a` in the same hook, then the action
+- Prevents mature propagation. This means that if you have a shortcut for `ctrl + a` and `ctrl + shift + a` in the same hook, then the action
   for `ctrl + a` will not trigger when pressing `ctrl + shift + a`.
 - Support for special keys: Shift, Ctrl (command on Mac), Alt (option on Mac).
 

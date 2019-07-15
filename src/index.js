@@ -39,7 +39,7 @@ const isSingleKeyEvent = e =>
 
 const isSingleKeyShortcut = shortcut => !shortcut.keys.filter(comboKeys).length
 
-const code = key => `Key${key.toUpperCase()}`
+const getKeyCode = key => `Key${key.toUpperCase()}`
 
 const useKeyboardShortcuts = (
   shortcuts,
@@ -69,11 +69,11 @@ const useKeyboardShortcuts = (
     )
   }
 
-  const generateFunction = (shortcut, event) => {
+  const callCallback = (shortcut, event) => {
     if (event.type === "keydown") {
       const keys = shortcut.keys.filter(withoutComboKeys)
       const valid = validateKeys(keys)
-      if (!valid || code(keys[0]) !== event.code) return
+      if (!valid || getKeyCode(keys[0]) !== event.code) return
     }
 
     const shouldExecAction =
@@ -88,7 +88,7 @@ const useKeyboardShortcuts = (
   }
 
   const handleKeyboardShortcuts = e =>
-    shortcuts.forEach(shortcut => generateFunction(shortcut, e))
+    shortcuts.forEach(shortcut => callCallback(shortcut, e))
 
   const addEventListener = () =>
     document.addEventListener(eventType, handleKeyboardShortcuts, {
