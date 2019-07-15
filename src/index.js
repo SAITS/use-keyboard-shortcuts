@@ -84,11 +84,12 @@ const useKeyboardShortcuts = (
     if (!valid) return
 
     const key = keys[0]
+    const keyCode = `Key${key.toUpperCase()}`
 
     const shouldExecAction =
       !shortcut.disabled &&
       allComboKeysPressed(shortcut.keys, event) &&
-      (event.type === "mousewheel" || key === event.code) &&
+      (event.type === "mousewheel" || keyCode === event.code) &&
       shortcutHasPrioroty(shortcut, key, event)
 
     if (shouldExecAction) {
