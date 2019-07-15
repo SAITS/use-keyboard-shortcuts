@@ -14,10 +14,10 @@ const allComboKeysPressed = (keys, event) => {
   return true
 }
 
-const validateKeys = (keys, eventType) => {
-  let errorMessage = undefined
+const validateKeys = keys => {
+  let errorMessage
 
-  if (eventType !== "mousewheel" && !keys.length)
+  if (!keys.length)
     errorMessage = `You need to specify a key besides ${JSON.stringify(
       ALLOWED_COMBO_KEYS
     )} for keydown events.`
@@ -27,18 +27,19 @@ const validateKeys = (keys, eventType) => {
     )} can be used.
     Found ${keys.length}: [${keys.map(key => `"${key}"`)}].`
 
-  if (errorMessage) throwError(errorMessage)
-  return errorMessage === undefined
+  return errorMessage ? throwError(errorMessage) : true
 }
 
 const withoutComboKeys = key => !ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
 
 const comboKeys = key => ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
 
-const isSingleKeyEvent = event =>
-  !event.shiftKey && !event.metaKey && !event.altKey && !event.ctrlKey
+const isSingleKeyEvent = e =>
+  !e.shiftKey && !e.metaKey && !e.altKey && !e.ctrlKey
 
 const isSingleKeyShortcut = shortcut => !shortcut.keys.filter(comboKeys).length
+
+const code = key => `Key${key.toUpperCase()}`
 
 const useKeyboardShortcuts = (
   shortcuts,
@@ -56,41 +57,29 @@ const useKeyboardShortcuts = (
       )}. Found event: "${eventType}".`
     )
 
-  const shortcutHasPrioroty = (inputShortcut, key, event) => {
+  const shortcutHasPrioroty = (inputShortcut, event) => {
     if (shortcuts.length === 1) return true
     if (isSingleKeyShortcut(inputShortcut) && isSingleKeyEvent(event))
       return true
 
-    const hasSameKey = shortcut =>
-      shortcut.keys.includes(key) && shortcut !== inputShortcut
-
-    const shortcutsWithSameKey = shortcuts.filter(hasSameKey)
-    if (!shortcutsWithSameKey.length) return true
-
-    return (
-      allComboKeysPressed(inputShortcut.keys, event) &&
-      !shortcutsWithSameKey.find(
-        shortcut =>
-          allComboKeysPressed(shortcut.keys, event) &&
-          shortcut.keys.length > inputShortcut.keys.length
-      )
+    return !shortcuts.find(
+      shortcut =>
+        allComboKeysPressed(shortcut.keys, event) &&
+        shortcut.keys.length > inputShortcut.keys.length
     )
   }
 
   const generateFunction = (shortcut, event) => {
-    const keys = shortcut.keys.filter(withoutComboKeys)
-
-    const valid = validateKeys(keys, event.type)
-    if (!valid) return
-
-    const key = keys[0]
-    const keyCode = `Key${key.toUpperCase()}`
+    if (event.type === "keydown") {
+      const keys = shortcut.keys.filter(withoutComboKeys)
+      const valid = validateKeys(keys)
+      if (!valid || code(keys[0]) !== event.code) return
+    }
 
     const shouldExecAction =
       !shortcut.disabled &&
       allComboKeysPressed(shortcut.keys, event) &&
-      (event.type === "mousewheel" || keyCode === event.code) &&
-      shortcutHasPrioroty(shortcut, key, event)
+      shortcutHasPrioroty(shortcut, event)
 
     if (shouldExecAction) {
       event.preventDefault()

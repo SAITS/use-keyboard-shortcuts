@@ -21,7 +21,7 @@ const App = () => {
 
   useKeyboardShortcuts([
     { keys: ["a"], onEvent: handlePressA },
-    { keys: ["Ctrl", "a"], onEvent: handlePressCtrlA },
+    { keys: ["ctrl", "a"], onEvent: handlePressCtrlA },
     { keys: ["ctrl", "shift", "a"], onEvent: handlePressCtrlShiftA },
     {
       keys: ["ctrl", "shift", "alt", "a"],
