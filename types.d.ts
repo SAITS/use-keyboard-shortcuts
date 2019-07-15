@@ -1,5 +1,3 @@
-import * as React from "react"
-
 export interface Shortcut {
   keys: string[]
   onEvent: (event: KeyboardEvent | WheelEvent) => void

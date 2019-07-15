@@ -4,6 +4,15 @@
 
 [![NPM](https://img.shields.io/npm/v/use-keyboard-shortcuts.svg)](https://www.npmjs.com/package/use-keyboard-shortcuts) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## Features
+
+- Easy to use
+- Support for `keydown` and `mousewheel` events
+- Attaches listeners to the document
+- Prevents mature propagation. This means that if you have a shortcut for `ctrl + a` and `ctrl + shift + a` in the same hook, then the action
+  for `ctrl + a` will not trigger when pressing `ctrl + shift + a`.
+- Support for special keys: Shift, Ctrl (command on Mac), Alt (option on Mac).
+
 ## Install
 
 ```bash
