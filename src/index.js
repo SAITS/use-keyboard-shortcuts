@@ -39,7 +39,14 @@ const isSingleKeyEvent = e =>
 
 const isSingleKeyShortcut = shortcut => !shortcut.keys.filter(comboKeys).length
 
-const getKeyCode = key => `Key${key.toUpperCase()}`
+const getKeyCode = key => {
+  if (key.length === 1 && key.search(/[^a-zA-Z]+/) === -1)
+    return `Key${key.toUpperCase()}`
+
+  if (key.length === 1 && typeof Number(key) === "number") return `Digit${key}`
+
+  return key
+}
 
 const useKeyboardShortcuts = (
   shortcuts,
