@@ -1,17 +1,38 @@
 # use-keyboard-shortcuts
 
-> React hook to attach keyboard shortcuts to the document.
+> An intuitive React hook to enable keyboard shortcuts.
 
 [![NPM](https://img.shields.io/npm/v/use-keyboard-shortcuts.svg)](https://www.npmjs.com/package/use-keyboard-shortcuts) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+## Quick Example
+
+```jsx
+  useKeyboardShortcuts([
+    { keys: ["ctrl", "a"], onEvent: event => alert("ctrl + a was pressed") },
+    { keys: ["shift", "b"], onEvent: event => alert("shift + b was pressed") },
+    { keys: ["Tab"], handleNext },
+    { keys: ["Esc"], handleClose },
+    { keys: ["Enter"], handleSubmit },
+  ])
+
+  useKeyboardShortcuts(
+    [{ keys: ["ctrl", "shift"], onEvent: () => alert('ctrl + shift + scroll is active') }],
+    true,
+    [],
+    "mousewheel"
+  )
+}
+```
 
 ## Features
 
 - Easy to use
+- Typescript support
+- Multiple shortcuts registered at the same time
+- Support for special keys: Shift, Ctrl (command on Mac), Alt (option on Mac).
 - Support for `keydown` and `mousewheel` events
-- Attaches listeners to the document
 - Prevents mature propagation. This means that if you have a shortcut for `ctrl + a` and `ctrl + shift + a` in the same hook, then the action
   for `ctrl + a` will not trigger when pressing `ctrl + shift + a`.
-- Support for special keys: Shift, Ctrl (command on Mac), Alt (option on Mac).
 
 ## Install
 
@@ -27,8 +48,11 @@ import React from "react"
 import useKeyboardShortcuts from "use-keyboard-shortcuts"
 
 const Example = () => {
+  const [isOpen, setIsOpen] = React.useState(false)
+
   useKeyboardShortcuts([
     { keys: ["ctrl", "a"], onEvent: event => alert("ctrl + a was pressed") },
+    { keys: ["Esc"], onEvent: () => setIsOpen(false)  },
   ])
 
   return <div>...</div>
@@ -42,9 +66,9 @@ const Example = () => {
 | Argument (in order) | Type                       | Default     | Description                                                                                                                  |
 | ------------------- | -------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | shortcuts           | `Shortcut[]`               | `undefined` | Array of `Shortcut`-objects that should listen to the specified `dependencies` and `eventType`. See Shortcut object-section. |
-| active              | `boolean`                  | `true`      | Whether or not the listener should be active.                                                                                |
-| dependencies        | `any[]`                    | `[]`        | If the `onEvent`-callback receives a new value, that value needs to be specified here.                                       |
-| eventType           | `"keydown"`/`"mousewheel"` | `"keydown"` | The type of event the listener should listen to.                                                                             |
+| active              | `boolean`                  | `true`      | Disables or enables all shortcuts.
+| dependencies        | `any[]`                    | `[]`        | List dependencies of the shortcuts
+| eventType           | `"keydown"`/`"mousewheel"` | `"keydown"` | Wether it should listen for keyboard or mouse scroll events
 
 ## Shortcut object
 
@@ -52,9 +76,9 @@ const Example = () => {
 
 | Key        | Type              | Description                                                          |
 | ---------- | ----------------- | -------------------------------------------------------------------- |
-| `keys`     | `string[]`        | Combination of keys that needs to be pressed to trigger `onEvent()`. |
+| `keys`     | `string[]`        | Combination of [keys](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values) that needs to be pressed to trigger `onEvent()`. |
 | `onEvent`  | `function(event)` | Action for when combination in `keys` are pressed.                   |
-| `disabled` | `boolean`         | Used if you need to disable `onEvent()`.                             |
+| `disabled` | `boolean`         | Used to disable a shortcut in particular                             |
 
 ## Example
 
