@@ -3,7 +3,6 @@ import { useEffect } from "react"
 export type Shortcut = {
   keys: string[]
   onEvent: (event: ShortcutEvent) => void
-  test?: string
   disabled?: boolean
 }
 
