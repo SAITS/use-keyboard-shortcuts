@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import useKeyboardShortcuts from "use-keyboard-shortcuts"
+import { useKeyboardShortcuts } from "use-keyboard-shortcuts"
 
 const handlePressCtrlA = event => alert("ctrl + a was pressed")
 
@@ -32,7 +32,7 @@ const App = () => {
     [{ keys: ["ctrl", "shift"], onEvent: handleScroll }],
     scrollIsActive,
     [rangeValue],
-    "mousewheel"
+    "wheel"
   )
 
   return (

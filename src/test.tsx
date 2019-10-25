@@ -2,8 +2,8 @@ import React, { useState } from "react"
 
 import "@testing-library/jest-dom/extend-expect"
 
-import useKeyboardShortcuts from "./"
 import { render, fireEvent } from "@testing-library/react"
+import { useKeyboardShortcuts } from "."
 
 const TestComponent = () => {
   const [key, setKey] = useState<string>("Nothing pressed")
@@ -135,6 +135,7 @@ describe("useKeyboardShortcuts", () => {
         [{ keys: ["a"], onEvent: console.log }],
         true,
         [],
+        // @ts-ignore
         "invalidevent"
       )
       return null
