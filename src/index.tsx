@@ -6,10 +6,21 @@ export type Shortcut = {
   disabled?: boolean
 }
 
+export enum EventType {
+  keydown = "keydown",
+  wheel = "wheel",
+}
+
+export enum ComboKey {
+  ctrl = "ctrl",
+  shift = "shift",
+  alt = "lat",
+}
+
 export type ShortcutEvent = KeyboardEvent | WheelEvent
 
-const ALLOWED_COMBO_KEYS = ["ctrl", "shift", "alt"]
-const ALLOWED_EVENTS = ["keydown", "wheel"]
+const ALLOWED_COMBO_KEYS = Object.keys(ComboKey)
+const ALLOWED_EVENTS = Object.keys(EventType)
 
 const throwError = (message: string): void =>
   console.error(`Error thrown for useKeyboardShortcuts: ${message}`)
@@ -67,6 +78,7 @@ export const useKeyboardShortcuts = (
   if (!shortcuts || !shortcuts.length)
     return throwError("You need to pass at least one shortcut as an argument.")
 
+  // @ts-ignore
   if (!ALLOWED_EVENTS.includes(eventType))
     return throwError(
       `Unsupported event. Supported events are: ${JSON.stringify(
