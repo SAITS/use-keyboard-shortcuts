@@ -6,21 +6,26 @@ import { render, fireEvent } from "@testing-library/react"
 import { useKeyboardShortcuts } from "."
 
 const TestComponent = () => {
-  const [key, setKey] = useState<string>("Nothing pressed")
+  const [combinations, setCombinations] = useState<string[]>([])
+
+  const appendCombination = (combination: string) =>
+    setCombinations([...combinations, combination])
 
   useKeyboardShortcuts([
-    { keys: ["a"], onEvent: () => setKey("Pressed a") },
-    { keys: ["a"], onEvent: () => setKey("Pressed a") },
-    { keys: ["Shift", "Minus"], onEvent: () => setKey("Pressed ?") },
-    { keys: ["9"], onEvent: () => setKey("Pressed 9") },
-    { keys: ["ctrl", "a"], onEvent: () => setKey("Pressed ctrl + a") },
+    { keys: ["a"], onEvent: () => appendCombination("a") },
+    { keys: ["Shift", "Minus"], onEvent: () => appendCombination("?") },
+    { keys: ["9"], onEvent: () => appendCombination("9") },
+    {
+      keys: ["ctrl", "a"],
+      onEvent: () => appendCombination("ctrl + a"),
+    },
     {
       keys: ["ctrl", "shift", "a"],
-      onEvent: () => setKey("Pressed ctrl + shift + a"),
+      onEvent: () => appendCombination("ctrl + shift + a"),
     },
     {
       keys: ["ctrl", "shift", "alt", "a"],
-      onEvent: () => setKey("Pressed ctrl + shift + alt + a"),
+      onEvent: () => appendCombination("ctrl + shift + alt + a"),
     },
   ])
 
@@ -28,14 +33,15 @@ const TestComponent = () => {
     [
       {
         keys: ["ctrl", "shift"],
-        onEvent: () => setKey("Scrolled + ctrl + shift"),
+        onEvent: () => appendCombination("ctrl + shift + scroll"),
       },
     ],
     true,
     [],
     "wheel"
   )
-  return <>{key}</>
+
+  return <>{combinations.join(", ")}</>
 }
 
 describe("useKeyboardShortcuts", () => {
@@ -43,35 +49,54 @@ describe("useKeyboardShortcuts", () => {
     const { findByText } = render(<TestComponent />)
 
     fireEvent.keyDown(document, { code: "KeyA" })
-    expect(await findByText("Pressed a")).toBeInTheDocument()
+    expect(await findByText("a")).toBeInTheDocument()
   })
 
   it("handles digit characters", async () => {
     const { findByText } = render(<TestComponent />)
 
     fireEvent.keyDown(document, { code: "Digit9" })
-    expect(await findByText("Pressed 9")).toBeInTheDocument()
+    expect(await findByText("9")).toBeInTheDocument()
   })
 
   it("handles ?", async () => {
     const { findByText } = render(<TestComponent />)
 
     fireEvent.keyDown(document, { shiftKey: true, code: "Minus" })
-    expect(await findByText("Pressed ?")).toBeInTheDocument()
+    expect(await findByText("?")).toBeInTheDocument()
   })
 
   it("handles ctrl + char", async () => {
     const { findByText } = render(<TestComponent />)
 
     fireEvent.keyDown(document, { ctrlKey: true, code: "KeyA" })
-    expect(await findByText("Pressed ctrl + a")).toBeInTheDocument()
+    expect(await findByText("ctrl + a")).toBeInTheDocument()
+  })
+
+  it("handles mature propagation", async () => {
+    const comboEvent = jest.fn()
+
+    const MaturePropagation = () => {
+      useKeyboardShortcuts([
+        { keys: ["ctrl", "shift", "a"], onEvent: comboEvent },
+      ])
+      return null
+    }
+
+    render(<MaturePropagation />)
+
+    fireEvent.keyDown(document, { ctrlKey: true, code: "KeyA" })
+    expect(comboEvent).not.toHaveBeenCalled()
+
+    fireEvent.keyDown(document, { ctrlKey: true, shiftKey: true, code: "KeyA" })
+    expect(comboEvent).toHaveBeenCalled()
   })
 
   it("handles ctrl + shift + char", async () => {
     const { findByText } = render(<TestComponent />)
 
     fireEvent.keyDown(document, { shiftKey: true, ctrlKey: true, code: "KeyA" })
-    expect(await findByText("Pressed ctrl + shift + a")).toBeInTheDocument()
+    expect(await findByText("ctrl + shift + a")).toBeInTheDocument()
   })
 
   it("handles ctrl + shift + alt + char", async () => {
@@ -83,9 +108,7 @@ describe("useKeyboardShortcuts", () => {
       ctrlKey: true,
       code: "KeyA",
     })
-    expect(
-      await findByText("Pressed ctrl + shift + alt + a")
-    ).toBeInTheDocument()
+    expect(await findByText("ctrl + shift + alt + a")).toBeInTheDocument()
   })
 
   it("disables shortcuts", async () => {
@@ -109,7 +132,7 @@ describe("useKeyboardShortcuts", () => {
     const { findByText } = render(<TestComponent />)
 
     fireEvent.wheel(document, { shiftKey: true, ctrlKey: true })
-    expect(await findByText("Scrolled + ctrl + shift")).toBeInTheDocument()
+    expect(await findByText("ctrl + shift + scroll")).toBeInTheDocument()
   })
 
   it("throws error when no shortcuts are given", async () => {
