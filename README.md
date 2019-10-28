@@ -86,4 +86,4 @@ See the example-folder for an extended example of how to use this hook with the 
 
 ## License
 
-MIT Â© [SAITS](https://github.com/SAITS)
+MIT © [SAITS](https://github.com/SAITS)

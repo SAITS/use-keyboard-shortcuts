@@ -1,12 +1,31 @@
 import { useEffect } from "react"
 
-const ALLOWED_COMBO_KEYS = ["ctrl", "shift", "alt"]
-const ALLOWED_EVENTS = ["keydown", "mousewheel"]
+export type Shortcut = {
+  keys: string[]
+  onEvent: (event: ShortcutEvent) => void
+  disabled?: boolean
+}
 
-const throwError = message =>
+export enum EventType {
+  keydown = "keydown",
+  wheel = "wheel",
+}
+
+export enum ComboKey {
+  ctrl = "ctrl",
+  shift = "shift",
+  alt = "lat",
+}
+
+export type ShortcutEvent = KeyboardEvent | WheelEvent
+
+const ALLOWED_COMBO_KEYS = Object.keys(ComboKey)
+const ALLOWED_EVENTS = Object.keys(EventType)
+
+const throwError = (message: string): void =>
   console.error(`Error thrown for useKeyboardShortcuts: ${message}`)
 
-const allComboKeysPressed = (keys, event) => {
+const allComboKeysPressed = (keys: string[], event: ShortcutEvent) => {
   keys = keys.map(key => key.toLowerCase())
   if (keys.includes("ctrl") && (!event.ctrlKey && !event.metaKey)) return false
   if (keys.includes("shift") && !event.shiftKey) return false
@@ -14,8 +33,8 @@ const allComboKeysPressed = (keys, event) => {
   return true
 }
 
-const validateKeys = keys => {
-  let errorMessage
+const validateKeys = (keys: string[]) => {
+  let errorMessage: string | null = null
 
   if (!keys.length)
     errorMessage = `You need to specify a key besides ${JSON.stringify(
@@ -24,22 +43,24 @@ const validateKeys = keys => {
   if (keys.length > 1)
     errorMessage = `Only one key besides ${JSON.stringify(
       ALLOWED_COMBO_KEYS
-    )} can be used.
-    Found ${keys.length}: [${keys.map(key => `"${key}"`)}].`
+    )} can be used. Found ${keys.length}: [${keys.map(key => `"${key}"`)}].`
 
   return errorMessage ? throwError(errorMessage) : true
 }
 
-const withoutComboKeys = key => !ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
+const withoutComboKeys = (key: string) =>
+  !ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
 
-const comboKeys = key => ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
+const comboKeys = (key: string) =>
+  ALLOWED_COMBO_KEYS.includes(key.toLowerCase())
 
-const isSingleKeyEvent = e =>
+const isSingleKeyEvent = (e: ShortcutEvent) =>
   !e.shiftKey && !e.metaKey && !e.altKey && !e.ctrlKey
 
-const isSingleKeyShortcut = shortcut => !shortcut.keys.filter(comboKeys).length
+const isSingleKeyShortcut = (shortcut: Shortcut) =>
+  !shortcut.keys.filter(comboKeys).length
 
-const getKeyCode = key => {
+const getKeyCode = (key: string) => {
   if (key.length === 1 && key.search(/[^a-zA-Z]+/) === -1)
     return `Key${key.toUpperCase()}`
 
@@ -48,15 +69,16 @@ const getKeyCode = key => {
   return key
 }
 
-const useKeyboardShortcuts = (
-  shortcuts,
+export const useKeyboardShortcuts = (
+  shortcuts: Shortcut[],
   active = true,
-  dependencies = [],
-  eventType = "keydown"
-) => {
+  dependencies: unknown[] = [],
+  eventType: "keydown" | "wheel" = "keydown"
+): void => {
   if (!shortcuts || !shortcuts.length)
     return throwError("You need to pass at least one shortcut as an argument.")
 
+  // @ts-ignore
   if (!ALLOWED_EVENTS.includes(eventType))
     return throwError(
       `Unsupported event. Supported events are: ${JSON.stringify(
@@ -64,7 +86,10 @@ const useKeyboardShortcuts = (
       )}. Found event: "${eventType}".`
     )
 
-  const shortcutHasPrioroty = (inputShortcut, event) => {
+  const shortcutHasPrioroty = (
+    inputShortcut: Shortcut,
+    event: ShortcutEvent
+  ) => {
     if (shortcuts.length === 1) return true
     if (isSingleKeyShortcut(inputShortcut) && isSingleKeyEvent(event))
       return true
@@ -76,10 +101,11 @@ const useKeyboardShortcuts = (
     )
   }
 
-  const callCallback = (shortcut, event) => {
-    if (event.type === "keydown") {
+  const callCallback = (shortcut: Shortcut, event: ShortcutEvent) => {
+    if (event instanceof KeyboardEvent) {
       const keys = shortcut.keys.filter(withoutComboKeys)
       const valid = validateKeys(keys)
+
       if (!valid || getKeyCode(keys[0]) !== event.code) return
     }
 
@@ -94,7 +120,7 @@ const useKeyboardShortcuts = (
     }
   }
 
-  const handleKeyboardShortcuts = e =>
+  const handleKeyboardShortcuts = (e: ShortcutEvent) =>
     shortcuts.forEach(shortcut => callCallback(shortcut, e))
 
   const addEventListener = () =>
@@ -110,5 +136,3 @@ const useKeyboardShortcuts = (
     return removeEventListener
   }, [active, ...dependencies])
 }
-
-export default useKeyboardShortcuts
