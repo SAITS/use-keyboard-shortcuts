@@ -4,6 +4,7 @@ export type Shortcut = {
   keys: string[]
   onEvent: (event: ShortcutEvent) => void
   disabled?: boolean
+  skipPreventDefault?: boolean
 }
 
 export enum EventType {
@@ -21,6 +22,7 @@ export type ShortcutEvent = KeyboardEvent | WheelEvent
 
 const ALLOWED_COMBO_KEYS = Object.keys(ComboKey)
 const ALLOWED_EVENTS = Object.keys(EventType)
+const SKIP_PREVENT_DEFAULT_FOR = ["INPUT", "TEXTAREA"]
 
 const throwError = (message: string): void =>
   console.error(`Error thrown for useKeyboardShortcuts: ${message}`)
@@ -114,8 +116,12 @@ export const useKeyboardShortcuts = (
       allComboKeysPressed(shortcut.keys, event) &&
       shortcutHasPrioroty(shortcut, event)
 
+    const shouldSkipPreventDefault =
+      shortcut.skipPreventDefault ||
+      SKIP_PREVENT_DEFAULT_FOR.includes(event.target && event.target["tagName"])
+
     if (shouldExecAction) {
-      event.preventDefault()
+      if (!shouldSkipPreventDefault) event.preventDefault()
       shortcut.onEvent(event)
     }
   }
