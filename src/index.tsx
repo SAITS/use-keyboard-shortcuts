@@ -14,13 +14,14 @@ export enum EventType {
 export enum ComboKey {
   ctrl = "ctrl",
   shift = "shift",
-  alt = "lat",
+  alt = "alt",
 }
 
 export type ShortcutEvent = KeyboardEvent | WheelEvent
 
 const ALLOWED_COMBO_KEYS = Object.keys(ComboKey)
 const ALLOWED_EVENTS = Object.keys(EventType)
+const EDITABLE_TAGS = ["INPUT", "TEXTAREA"]
 
 const throwError = (message: string): void =>
   console.error(`Error thrown for useKeyboardShortcuts: ${message}`)
@@ -109,8 +110,17 @@ export const useKeyboardShortcuts = (
       if (!valid || getKeyCode(keys[0]) !== event.code) return
     }
 
+    // If the targetted element is a input for example, and the user doesn't
+    // press ctrl or meta it probably means that they are trying to type in the
+    // input field
+    const writing =
+      EDITABLE_TAGS.includes(event.target && event.target["tagName"]) &&
+      !event.ctrlKey &&
+      !event.metaKey
+
     const shouldExecAction =
       !shortcut.disabled &&
+      !writing &&
       allComboKeysPressed(shortcut.keys, event) &&
       shortcutHasPrioroty(shortcut, event)
 
