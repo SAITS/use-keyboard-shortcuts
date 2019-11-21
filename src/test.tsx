@@ -13,7 +13,8 @@ const TestComponent = () => {
 
   useKeyboardShortcuts([
     { keys: ["a"], onEvent: () => appendCombination("a") },
-    { keys: ["Shift", "Minus"], onEvent: () => appendCombination("?") },
+    { keys: ["?"], onEvent: () => appendCombination("?") },
+    { keys: ["Shift", "Minus"], onEvent: () => appendCombination("shift + ?") },
     { keys: ["9"], onEvent: () => appendCombination("9") },
     {
       keys: ["ctrl", "a"],
@@ -62,8 +63,15 @@ describe("useKeyboardShortcuts", () => {
   it("handles ?", async () => {
     const { findByText } = render(<TestComponent />)
 
-    fireEvent.keyDown(document, { shiftKey: true, code: "Minus" })
+    fireEvent.keyDown(document, { key: "?" })
     expect(await findByText("?")).toBeInTheDocument()
+  })
+
+  it("handles ? even if shift is pressed (swedish keyboard layout for instance)", async () => {
+    const { findByText } = render(<TestComponent />)
+
+    fireEvent.keyDown(document, { shiftKey: true, code: "Minus" })
+    expect(await findByText("shift + ?")).toBeInTheDocument()
   })
 
   it("handles ctrl + char", async () => {

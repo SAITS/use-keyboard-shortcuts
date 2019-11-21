@@ -34,7 +34,7 @@ const allComboKeysPressed = (keys: string[], event: ShortcutEvent) => {
   return true
 }
 
-const validateKeys = (keys: string[]) => {
+const validateKeys = (keys: string[]): boolean => {
   let errorMessage: string | null = null
 
   if (!keys.length)
@@ -46,7 +46,12 @@ const validateKeys = (keys: string[]) => {
       ALLOWED_COMBO_KEYS
     )} can be used. Found ${keys.length}: [${keys.map(key => `"${key}"`)}].`
 
-  return errorMessage ? throwError(errorMessage) : true
+  if (errorMessage) {
+    throwError(errorMessage)
+    return false
+  }
+
+  return true
 }
 
 const withoutComboKeys = (key: string) =>
@@ -106,8 +111,10 @@ export const useKeyboardShortcuts = (
     if (event instanceof KeyboardEvent) {
       const keys = shortcut.keys.filter(withoutComboKeys)
       const valid = validateKeys(keys)
+      const singleKey =
+        shortcut.keys.length === 1 && shortcut.keys[0] === event.key
 
-      if (!valid || getKeyCode(keys[0]) !== event.code) return
+      if (!valid || !(singleKey || getKeyCode(keys[0]) === event.code)) return
     }
 
     // If the targetted element is a input for example, and the user doesn't
