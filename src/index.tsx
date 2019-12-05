@@ -28,7 +28,7 @@ const throwError = (message: string): void =>
 
 const allComboKeysPressed = (keys: string[], event: ShortcutEvent) => {
   keys = keys.map(key => key.toLowerCase())
-  if (keys.includes("ctrl") && !event.ctrlKey && !event.metaKey) return false
+  if (keys.includes("ctrl") && (!event.ctrlKey && !event.metaKey)) return false
   if (keys.includes("shift") && !event.shiftKey) return false
   if (keys.includes("alt") && !event.altKey) return false
   return true
@@ -122,7 +122,7 @@ export const useKeyboardShortcuts = (
     // input field
     const writing =
       EDITABLE_TAGS.includes(event.target && event.target["tagName"]) &&
-      event instanceof KeyboardEvent && event.code !== "Escape" &&
+      (event instanceof KeyboardEvent && event.code !== "Escape") &&
       !event.ctrlKey &&
       !event.metaKey
 
