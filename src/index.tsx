@@ -28,7 +28,7 @@ const throwError = (message: string): void =>
 
 const allComboKeysPressed = (keys: string[], event: ShortcutEvent) => {
   keys = keys.map(key => key.toLowerCase())
-  if (keys.includes("ctrl") && (!event.ctrlKey && !event.metaKey)) return false
+  if (keys.includes("ctrl") && !event.ctrlKey && !event.metaKey) return false
   if (keys.includes("shift") && !event.shiftKey) return false
   if (keys.includes("alt") && !event.altKey) return false
   return true
@@ -92,7 +92,7 @@ export const useKeyboardShortcuts = (
       )}. Found event: "${eventType}".`
     )
 
-  const shortcutHasPrioroty = (
+  const shortcutHasPriority = (
     inputShortcut: Shortcut,
     event: ShortcutEvent
   ) => {
@@ -118,10 +118,11 @@ export const useKeyboardShortcuts = (
     }
 
     // If the targetted element is a input for example, and the user doesn't
-    // press ctrl or meta it probably means that they are trying to type in the
+    // press ctrl or meta or escape it probably means that they are trying to type in the
     // input field
     const writing =
       EDITABLE_TAGS.includes(event.target && event.target["tagName"]) &&
+      event instanceof KeyboardEvent && event.code !== "Escape" &&
       !event.ctrlKey &&
       !event.metaKey
 
@@ -129,7 +130,7 @@ export const useKeyboardShortcuts = (
       !shortcut.disabled &&
       !writing &&
       allComboKeysPressed(shortcut.keys, event) &&
-      shortcutHasPrioroty(shortcut, event)
+      shortcutHasPriority(shortcut, event)
 
     if (shouldExecAction) {
       event.preventDefault()
