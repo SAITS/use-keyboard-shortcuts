@@ -122,7 +122,7 @@ export const useKeyboardShortcuts = (
     // input field
     const writing =
       EDITABLE_TAGS.includes(event.target && event.target["tagName"]) &&
-      (event instanceof KeyboardEvent && event.code !== "Escape") &&
+      ('code' in event && event.code !== "Escape") &&
       !event.ctrlKey &&
       !event.metaKey
 
