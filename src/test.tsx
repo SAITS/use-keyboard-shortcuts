@@ -159,6 +159,29 @@ describe("useKeyboardShortcuts", () => {
     expect(await findByText("ctrl + shift + scroll")).toBeInTheDocument()
   })
 
+  it("ignores events when input element has focus, unless ctrl, meta or Escape is pressed", async () => {
+    const onEventMock = jest.fn()
+
+    const TestInputComponent = () => {
+      useKeyboardShortcuts([
+        { keys: ["a"], onEvent: onEventMock },
+        { keys: ["Escape"], onEvent: onEventMock },
+        { keys: ["ctrl", "a"], onEvent: onEventMock },
+      ])
+
+      return <input type="text" role="textbox" />
+    }
+    const { getByRole } = render(<TestInputComponent />)
+    const inputElem = getByRole("textbox")
+
+    fireEvent.keyDown(inputElem, { code: "KeyA" })
+    expect(onEventMock).not.toHaveBeenCalled()
+    fireEvent.keyDown(inputElem, { code: "Escape" })
+    expect(onEventMock).toHaveBeenCalledTimes(1)
+    fireEvent.keyDown(inputElem, { ctrlKey: true, code: "KeyA" })
+    expect(onEventMock).toHaveBeenCalledTimes(2)
+  })
+
   it("throws error when no shortcuts are given", async () => {
     console.error = jest.fn()
 
